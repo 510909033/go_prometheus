@@ -26,7 +26,11 @@ func AddPrometheus() {
 }
 
 func inc() {
-	incCounter := prometheus.NewCounter("test_inc", "inc数")
+	var opts = prometheus.CounterOpts{
+		Name: "test_inc",
+		Help: "inc数",
+	}
+	incCounter := prometheus.NewCounter(opts)
 	for {
 		incCounter.Inc()
 		time.Sleep(time.Second)
