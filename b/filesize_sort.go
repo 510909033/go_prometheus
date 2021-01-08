@@ -12,6 +12,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"net/http"
+	_ "net/http/pprof"
 )
 
 var ch = make(chan int, 0)
@@ -19,6 +22,10 @@ var monitorStats = &Monitor{}
 var f *os.File
 
 func main() {
+
+	go func() {
+		http.ListenAndServe("localhost:6060", nil)
+	}()
 
 	dir := ``
 	log := ""
@@ -42,6 +49,8 @@ func main() {
 	fmt.Println(dir)
 	go monitor()
 	test1(dir)
+
+	select {}
 }
 
 func test1(dir string) {
@@ -118,6 +127,8 @@ func getPath(pathStr string) string {
 }
 
 func getPathSize(pathStr string) int64 {
+	//debug
+	time.Sleep(time.Millisecond)
 	//	pathStr = filepath.FromSlash(pathStr)
 	fmt.Println("getPathSize: ", pathStr)
 	//	cmd := exec.Command(`C:/MinGW/msys/bin/du.exe `, "-s", pathStr)
