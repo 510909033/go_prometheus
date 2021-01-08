@@ -4,10 +4,12 @@ import (
 	"bytes"
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
 	"regexp"
+	"runtime/pprof"
 	"sort"
 	"strconv"
 	"strings"
@@ -19,6 +21,15 @@ var monitorStats = &Monitor{}
 var f *os.File
 
 func main() {
+
+	f, err := os.OpenFile("e:/cpu.prof", os.O_RDWR|os.O_CREATE, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
+	pprof.StartCPUProfile(f)
+
+	defer pprof.StopCPUProfile()
 
 	dir := ``
 	log := ""
@@ -33,7 +44,6 @@ func main() {
 		panic("log empty")
 	}
 
-	var err error
 	f, err = os.OpenFile(log, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, 0755)
 	if err != nil {
 		panic(err)
@@ -42,6 +52,7 @@ func main() {
 	fmt.Println(dir)
 	go monitor()
 	test1(dir)
+
 }
 
 func test1(dir string) {
